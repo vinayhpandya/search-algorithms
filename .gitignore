@@ -17,6 +17,7 @@ venv/
 
 # Downloaded PDFs, if we ever add full-text as a stretch goal
 data/pdfs/
+data/raw/**
 
 # Jupyter checkpoints
 .ipynb_checkpoints/
