@@ -1,0 +1,262 @@
+[
+  {
+    "query": "image-based malware classification CNN",
+    "idx": 11
+  },
+  {
+    "query": "API call graph malware behavior modeling",
+    "idx": 15
+  },
+  {
+    "query": "dynamic analysis malware sandbox detection",
+    "idx": 18
+  },
+  {
+    "query": "malware classification word embeddings NLP techniques",
+    "idx": 11
+  },
+  {
+    "query": "PE file header malware classification",
+    "idx": 2
+  },
+  {
+    "query": "malware detection using API call sequences",
+    "idx": 8
+  },
+  {
+    "query": "zero-day malware detection deep learning",
+    "idx": 20
+  },
+  {
+    "query": "reinforcement learning malware detection evasion",
+    "idx": 18
+  },
+  {
+    "query": "malware family attribution APT",
+    "idx": 23
+  },
+  {
+    "query": "reinforcement learning malware detection evasion",
+    "idx": 14
+  },
+  {
+    "query": "malware detection federated learning privacy",
+    "idx": 17
+  },
+  {
+    "query": "explainable AI malware detection interpretability",
+    "idx": 6
+  },
+  {
+    "query": "malware classification transfer learning",
+    "idx": 7
+  },
+  {
+    "query": "malware family clustering unsupervised",
+    "idx": 11
+  },
+  {
+    "query": "malware classification autoencoder anomaly detection",
+    "idx": 14
+  },
+  {
+    "query": "ransomware detection behavioral analysis",
+    "idx": 8
+  },
+  {
+    "query": "android malware detection machine learning",
+    "idx": 5
+  },
+  {
+    "query": "malware family clustering unsupervised",
+    "idx": 16
+  },
+  {
+    "query": "generative adversarial network malware detection",
+    "idx": 5
+  },
+  {
+    "query": "image-based malware classification CNN",
+    "idx": 4
+  },
+  {
+    "query": "malware detection edge computing resource constrained",
+    "idx": 22
+  },
+  {
+    "query": "malware detection using API call sequences",
+    "idx": 2
+  },
+  {
+    "query": "malware family attribution APT",
+    "idx": 20
+  },
+  {
+    "query": "malware classification random forest gradient boosting",
+    "idx": 18
+  },
+  {
+    "query": "transformer models for malware classification",
+    "idx": 19
+  },
+  {
+    "query": "malware classification benchmark dataset evaluation",
+    "idx": 12
+  },
+  {
+    "query": "android malware detection machine learning",
+    "idx": 21
+  },
+  {
+    "query": "image-based malware classification CNN",
+    "idx": 15
+  },
+  {
+    "query": "opcode sequence deep learning malware classification",
+    "idx": 7
+  },
+  {
+    "query": "dynamic analysis malware sandbox detection",
+    "idx": 11
+  },
+  {
+    "query": "malware family attribution APT",
+    "idx": 2
+  },
+  {
+    "query": "transformer models for malware classification",
+    "idx": 5
+  },
+  {
+    "query": "IoT malware detection embedded systems",
+    "idx": 10
+  },
+  {
+    "query": "IoT malware detection embedded systems",
+    "idx": 7
+  },
+  {
+    "query": "recurrent neural network malware sequence classification",
+    "idx": 7
+  },
+  {
+    "query": "malware detection edge computing resource constrained",
+    "idx": 12
+  },
+  {
+    "query": "transformer models for malware classification",
+    "idx": 15
+  },
+  {
+    "query": "malware classification transfer learning",
+    "idx": 9
+  },
+  {
+    "query": "n-gram byte sequence malware detection",
+    "idx": 0
+  },
+  {
+    "query": "API call graph malware behavior modeling",
+    "idx": 2
+  },
+  {
+    "query": "binary code similarity malware detection",
+    "idx": 21
+  },
+  {
+    "query": "malware detection federated learning privacy",
+    "idx": 13
+  },
+  {
+    "query": "zero-day malware detection deep learning",
+    "idx": 6
+  },
+  {
+    "query": "malware detection federated learning privacy",
+    "idx": 9
+  },
+  {
+    "query": "dynamic analysis malware sandbox detection",
+    "idx": 2
+  },
+  {
+    "query": "malware classification random forest gradient boosting",
+    "idx": 6
+  },
+  {
+    "query": "malware family attribution APT",
+    "idx": 12
+  },
+  {
+    "query": "dynamic analysis malware sandbox detection",
+    "idx": 16
+  },
+  {
+    "query": "image-based malware classification CNN",
+    "idx": 3
+  },
+  {
+    "query": "malware classification autoencoder anomaly detection",
+    "idx": 24
+  },
+  {
+    "query": "generative adversarial network malware detection",
+    "idx": 7
+  },
+  {
+    "query": "malware detection network traffic analysis",
+    "idx": 9
+  },
+  {
+    "query": "reinforcement learning malware detection evasion",
+    "idx": 15
+  },
+  {
+    "query": "graph neural network malware detection",
+    "idx": 2
+  },
+  {
+    "query": "obfuscated malware detection evasion techniques",
+    "idx": 9
+  },
+  {
+    "query": "ransomware detection behavioral analysis",
+    "idx": 10
+  },
+  {
+    "query": "malware detection using API call sequences",
+    "idx": 6
+  },
+  {
+    "query": "self-supervised learning malware representation",
+    "idx": 6
+  },
+  {
+    "query": "graph neural network malware detection",
+    "idx": 19
+  },
+  {
+    "query": "android malware detection machine learning",
+    "idx": 17
+  },
+  {
+    "query": "malware classification autoencoder anomaly detection",
+    "idx": 2
+  },
+  {
+    "query": "malware classification random forest gradient boosting",
+    "idx": 2
+  },
+  {
+    "query": "malware detection using control flow graphs",
+    "idx": 0
+  },
+  {
+    "query": "packed malware unpacking detection",
+    "idx": 6
+  },
+  {
+    "query": "malware classification word embeddings NLP techniques",
+    "idx": 10
+  }
+]
