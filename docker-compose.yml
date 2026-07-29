@@ -27,6 +27,17 @@ services:
       - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
     depends_on:
       - opensearch
+    
+  
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    container_name: search-algorithms-qdrant
+    ports:
+      - "6333:6333"   # REST API
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrant-data:/qdrant/storage
 
 volumes:
   opensearch-data:
+  qdrant-data:
