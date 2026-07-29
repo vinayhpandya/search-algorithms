@@ -21,7 +21,7 @@ data/raw/**
 
 # Jupyter checkpoints
 .ipynb_checkpoints/
-
+eval/candidates.json
 README_files/
 
 README.html
