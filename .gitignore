@@ -22,6 +22,8 @@ data/raw/**
 # Jupyter checkpoints
 .ipynb_checkpoints/
 eval/candidates.json
+eval/cluster_centroids.json
+eval/semantic_ids.json
 README_files/
 
 README.html
