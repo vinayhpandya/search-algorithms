@@ -120,6 +120,49 @@ which this project doesn't have. A small-data LTR model losing to a
 pretrained cross-encoder is a realistic, expected outcome, not a
 failure to fix.
 
+### Semantic IDs
+
+Built a two-level hierarchical topic structure over the corpus by
+running k-means twice on existing SPECTER2 embeddings: 8 coarse
+clusters, then up to 4 sub-clusters within each, giving every paper a
+`[coarse, fine]` semantic ID (e.g. `[3, 1]`). This is the same
+underlying clustering math IVF-based ANN search uses internally to
+speed up search -- the difference here is intent: the cluster
+assignments are the actual output, meant to be inspected and used
+directly, not hidden plumbing for search acceleration.
+
+**What's built so far:**
+- `search/build_semantic_ids.py` — clusters embeddings, writes
+  `eval/semantic_ids.json` (paper → semantic ID) and
+  `eval/cluster_centroids.json` (coarse centroids), backfills both
+  `semantic_id` and `coarse_cluster` fields into the OpenSearch index
+- `search/semantic_neighbors.py` — "more like this" lookup: given a
+  paper, returns others sharing its semantic ID. A browsing feature,
+  not a query-based search method, so it's *not* included in the
+  NDCG/MRR/latency comparison table (different task: paper-to-paper
+  similarity, not query-to-paper retrieval)
+
+**What semantic IDs are *not*, here:** an IVF-style filtered search
+(embed query → nearest cluster → search within it) would reuse this
+same clustering as a search accelerator — legitimate, but structurally
+identical to IVF, not a distinct technique, so it isn't being
+presented as one.
+
+**What real generative retrieval would add:** in production systems
+(e.g. Google's TIGER), a model is *trained* to generate a document's
+semantic ID directly from a query -- via two training objectives
+(document text → its own ID; query text → the ID of its relevant
+document), letting the model generalize to queries it's never seen.
+The clustering built here provides the ID space that such a model
+would need to learn to generate; the query→ID generation model itself
+requires real training (dataset + fine-tuning), which is the next
+piece being built (see below).
+
+**Status: training a real query→semantic-ID model next**, using
+LLM-generated synthetic (query, relevant paper) pairs to build a
+training set of sufficient size (40 hand-labeled queries alone is too
+few), fine-tuning a small seq2seq model (t5-small) on GPU via Modal.
+
 ### Quality vs. latency
 
 Latency measured across all 40 eval queries, 5 runs each (first
@@ -168,6 +211,7 @@ larger quality gaps might see a clearer case for it.
 an additional feature ("stacking" a strong pretrained signal into the
 learned model) — a common real technique, untried here due to time.
 
+
 ## Status
 
 **Weekend 1 — core retrieval pipeline**
@@ -184,6 +228,9 @@ learned model) — a common real technique, untried here due to time.
 - [x] LightGBM LTR (query-level train/test split, 5 features) — underperformed
       hybrid/rerank; documented as an expected small-data/feature-richness
       finding, not a bug (see Findings above)
+- [x] Semantic IDs (hierarchical k-means over SPECTER2 embeddings,
+      "more like this" browsing feature)
+- [ ] Generative retrieval: trained query→semantic-ID model (in  progress)
 
 **Not yet started**
 - [ ] Embedding-based clustering / semantic ID exploration
