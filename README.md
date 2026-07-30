@@ -158,10 +158,12 @@ would need to learn to generate; the query→ID generation model itself
 requires real training (dataset + fine-tuning), which is the next
 piece being built (see below).
 
-**Status: training a real query→semantic-ID model next**, using
+**Status: training a real query→semantic-ID model next**, ~~using
 LLM-generated synthetic (query, relevant paper) pairs to build a
 training set of sufficient size (40 hand-labeled queries alone is too
-few), fine-tuning a small seq2seq model (t5-small) on GPU via Modal.
+few), fine-tuning a small seq2seq model (t5-small) on GPU via Modal.~~
+Done and pasting the results in the next report
+
 
 ### Quality vs. latency
 
@@ -230,7 +232,14 @@ learned model) — a common real technique, untried here due to time.
       finding, not a bug (see Findings above)
 - [x] Semantic IDs (hierarchical k-means over SPECTER2 embeddings,
       "more like this" browsing feature)
-- [ ] Generative retrieval: trained query→semantic-ID model (in  progress)
+- [x] Generative retrieval: trained query->semantic-ID model (t5-small on
+      Modal via synthetic LLM-generated queries) -- exact-match accuracy
+      12.82%, mode collapse onto a majority cluster; documented as a
+      data-scarcity finding, not a working retrieval method (see report.qmd)
+- [x] Semantic IDs as browsing/organizational feature
+      (search/semantic_neighbors.py) -- not included in the retrieval
+      comparison table (different task, not query-based)
+- [x] Full write-up (report.qmd)
 
 **Not yet started**
 - [ ] Embedding-based clustering / semantic ID exploration

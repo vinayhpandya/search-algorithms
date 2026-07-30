@@ -24,6 +24,9 @@ data/raw/**
 eval/candidates.json
 eval/cluster_centroids.json
 eval/semantic_ids.json
+eval/semantic_id_model.tar.gz
+eval/synthetic_queries.json
+eval/semantic_id_model_extracted/
 README_files/
 
 README.html

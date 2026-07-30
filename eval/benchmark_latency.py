@@ -14,6 +14,7 @@ from search.dense import search_dense
 from search.hybrid import search_hybrid
 from search.rerank import search_rerank
 from search.search_late_interaction import search_late_interaction
+from search.search_semantic_id import search_semantic_id
 from eval.queries import EVAL_QUERIES
 
 # Note: LTR isn't benchmarked here directly -- it operates on
@@ -26,6 +27,7 @@ METHODS = {
     "hybrid": search_hybrid,
     "rerank": search_rerank,
     "late_interaction": search_late_interaction,
+    "semantic_id": search_semantic_id,
 }
 
 RUNS_PER_QUERY = 5  # first run discarded as warmup
