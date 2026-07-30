@@ -23,6 +23,7 @@ from search.dense import search_dense
 from search.hybrid import search_hybrid
 from search.rerank import search_rerank
 from search.search_late_interaction import search_late_interaction
+from search.search_semantic_id import search_semantic_id
 from eval.queries import EVAL_QUERIES
 
 OUT_PATH = Path(__file__).parent / "candidates.json"
@@ -53,6 +54,7 @@ def run_all_methods(query: str) -> dict[str, list[dict]]:
         "hybrid": normalize_hybrid_or_rerank(search_hybrid(query, k=K)),
         "rerank": normalize_hybrid_or_rerank(search_rerank(query, k=K)),
         "late_interaction": normalize_hybrid_or_rerank(search_late_interaction(query, k=K)),
+        "semantic_id": normalize_hybrid_or_rerank(search_semantic_id(query, k=K)),
     }
 
 
