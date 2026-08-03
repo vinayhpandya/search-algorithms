@@ -16,7 +16,7 @@ import math
 from pathlib import Path
 
 CANDIDATES_PATH = Path(__file__).parent / "candidates.json"
-METHODS = ["bm25", "dense", "hybrid", "rerank", "late_interaction", "semantic_id"]
+METHODS = ["bm25", "dense", "hybrid", "rerank", "late_interaction", "semantic_id", "generative"]
 K = 10
 
 

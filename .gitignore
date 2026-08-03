@@ -10,6 +10,7 @@ venv/
 
 # Env / secrets
 .env
+checkpoints/
 
 # HuggingFace / model weight caches (downloaded fresh on first run)
 .cache/
@@ -18,7 +19,7 @@ venv/
 # Downloaded PDFs, if we ever add full-text as a stretch goal
 data/pdfs/
 data/raw/**
-
+data/synthetic_queries.jsonl
 # Jupyter checkpoints
 .ipynb_checkpoints/
 eval/candidates.json
