@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euxo pipefail
+# Amazon Linux 2023 bootstraps a disposable, single-node test cluster.
+dnf install -y docker
+systemctl enable --now docker
+sysctl -w vm.max_map_count=262144
+printf 'vm.max_map_count=262144\n' >/etc/sysctl.d/99-opensearch.conf
+mkdir -p /var/lib/scholarsearch/opensearch
+chown -R 1000:1000 /var/lib/scholarsearch/opensearch
+# Security plugin is disabled ONLY because the host has zero inbound ports and
+# the container binds strictly to host loopback. Never publish 9200 to 0.0.0.0.
+docker run -d --name scholarsearch-opensearch \
+  --restart unless-stopped \
+  -p 127.0.0.1:9200:9200 \
+  -e 'discovery.type=single-node' \
+  -e 'DISABLE_SECURITY_PLUGIN=true' \
+  -e 'OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g' \
+  --ulimit nofile=65536:65536 \
+  -v /var/lib/scholarsearch/opensearch:/usr/share/opensearch/data \
+  opensearchproject/opensearch:${opensearch_version}
