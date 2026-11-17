@@ -5,6 +5,7 @@ opensearch-data/
 __pycache__/
 *.pyc
 .venv/
+.venv-embed/
 venv/
 *.egg-info/
 
