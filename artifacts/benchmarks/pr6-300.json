@@ -1,0 +1,115 @@
+{
+  "created_at": "2026-11-18T06:06:47.099571+00:00",
+  "dataset": {
+    "total": 300,
+    "base": 250,
+    "held_out_paper_queries": 50,
+    "dimension": 768,
+    "seed": 42
+  },
+  "protocol": {
+    "metric": "cosine / normalized inner product",
+    "k": 10,
+    "repeats": 3,
+    "warmups": 1,
+    "faiss_threads": 1,
+    "ground_truth": "exact IndexFlatIP on base",
+    "latency_scope": "single-query Faiss search only, not model or network"
+  },
+  "results": [
+    {
+      "method": "exact-flat",
+      "parameters": {},
+      "training_ms": 0,
+      "build_ms": 0.523,
+      "recall_at_k": 1.0,
+      "p50_ms": 0.03,
+      "p95_ms": 0.03054,
+      "mean_ms": 0.03004,
+      "index_bytes": 768045
+    },
+    {
+      "method": "ivf-flat",
+      "parameters": {
+        "nlist": 4,
+        "nprobe": 1
+      },
+      "training_ms": 3.843,
+      "build_ms": 0.472,
+      "recall_at_k": 0.794,
+      "p50_ms": 0.01233,
+      "p95_ms": 0.01521,
+      "mean_ms": 0.01308,
+      "index_bytes": 782459
+    },
+    {
+      "method": "ivf-flat",
+      "parameters": {
+        "nlist": 4,
+        "nprobe": 2
+      },
+      "training_ms": 3.843,
+      "build_ms": 0.472,
+      "recall_at_k": 0.966,
+      "p50_ms": 0.02123,
+      "p95_ms": 0.02219,
+      "mean_ms": 0.02069,
+      "index_bytes": 782459
+    },
+    {
+      "method": "ivf-flat",
+      "parameters": {
+        "nlist": 4,
+        "nprobe": 4
+      },
+      "training_ms": 3.843,
+      "build_ms": 0.472,
+      "recall_at_k": 1.0,
+      "p50_ms": 0.03092,
+      "p95_ms": 0.03256,
+      "mean_ms": 0.03109,
+      "index_bytes": 782459
+    },
+    {
+      "method": "hnsw",
+      "parameters": {
+        "M": 16,
+        "efSearch": 16
+      },
+      "training_ms": 0,
+      "build_ms": 8.708,
+      "recall_at_k": 0.98,
+      "p50_ms": 0.01971,
+      "p95_ms": 0.0217,
+      "mean_ms": 0.01938,
+      "index_bytes": 804274
+    },
+    {
+      "method": "hnsw",
+      "parameters": {
+        "M": 16,
+        "efSearch": 64
+      },
+      "training_ms": 0,
+      "build_ms": 8.708,
+      "recall_at_k": 0.998,
+      "p50_ms": 0.04483,
+      "p95_ms": 0.04686,
+      "mean_ms": 0.04471,
+      "index_bytes": 804274
+    }
+  ],
+  "skipped": [
+    {
+      "method": "ivf-pq",
+      "reason": "Requires >= 9984 base vectors for PQ training"
+    }
+  ],
+  "limitations": "Held-out paper vectors are NOT user queries; no relevance judgments. Small datasets are smoke tests, not performance conclusions.",
+  "source": {
+    "uri": "s3://scholarsearch-1a1f8b35f8/scholarsearch/embeddings/openalex-f18677a87e78/specter2-c619dda82c2614d0/vectors.npy",
+    "digest": "c619dda82c2614d0",
+    "model": "allenai/specter2_base",
+    "paper_adapter": "allenai/specter2"
+  }
+}
