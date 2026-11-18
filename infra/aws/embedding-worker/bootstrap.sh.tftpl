@@ -1,0 +1,92 @@
+#!/bin/bash
+set -Eeuo pipefail
+exec > >(tee -a /var/log/scholarsearch-bootstrap.log) 2>&1
+
+# Install safety timer BEFORE any potentially slow network installs.
+cat > /etc/systemd/system/scholarsearch-deadline.service <<'UNIT'
+[Unit]
+Description=Stop ScholarSearch EC2 worker after maximum runtime
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/shutdown -h now
+UNIT
+cat > /etc/systemd/system/scholarsearch-deadline.timer <<'UNIT'
+[Unit]
+Description=Max runtime watchdog for ScholarSearch worker
+[Timer]
+OnBootSec=${runtime_hours}h
+AccuracySec=1min
+Unit=scholarsearch-deadline.service
+[Install]
+WantedBy=timers.target
+UNIT
+systemctl daemon-reload
+systemctl enable --now scholarsearch-deadline.timer
+
+# Standard Amazon Linux 2023 packages. Avoid copying local tokens or AWS profiles.
+dnf install -y python3.11 python3.11-pip tar gzip
+command -v aws >/dev/null 2>&1 || dnf install -y awscli
+install -d -m 0755 /opt/scholarsearch
+for attempt in 1 2 3 4 5 6 7 8; do
+  if aws s3 cp 's3://${bucket}/${source_key}' /opt/scholarsearch/source.tar.gz; then
+    break
+  fi
+  if [[ "$attempt" == 8 ]]; then echo 'Could not fetch source archive' >&2; exit 1; fi
+  sleep 15
+done
+cd /opt/scholarsearch
+tar -xzf source.tar.gz
+python3.11 -m venv /opt/scholarsearch/venv
+/opt/scholarsearch/venv/bin/python -m pip install --upgrade pip
+# Install CPU-only PyTorch to avoid unnecessary CUDA packages.
+/opt/scholarsearch/venv/bin/python -m pip install \
+  --index-url https://download.pytorch.org/whl/cpu 'torch==2.9.1'
+/opt/scholarsearch/venv/bin/python -m pip install \
+  'adapters==1.3.0' 'transformers==4.57.6' 'numpy>=1.26,<3' \
+  'polars>=1.0,<3' 'boto3>=1.35' 'requests>=2.31' 'python-dotenv>=1.0'
+/opt/scholarsearch/venv/bin/python -c 'from adapters import AutoAdapterModel; import torch; print("Worker dependencies ready", torch.__version__)'
+
+cat > /usr/local/bin/scholarsearch-run <<'WORKER'
+#!/bin/bash
+set -Eeuo pipefail
+exec > >(tee -a /var/log/scholarsearch-worker.log) 2>&1
+status=1
+cleanup() {
+  status=$?
+  trap - EXIT
+  echo "Embedding worker exiting with status $status"
+  # Copy logs for inspection after automatic stop; instance role authorizes only Experiment B.
+  aws s3 cp /var/log/scholarsearch-worker.log 's3://${bucket}/${prefix}/worker-logs/latest.log' || true
+  # Shutdown will STOP the instance (not terminate) due to the EC2 setting above.
+  /usr/sbin/shutdown -h now || true
+  exit "$status"
+}
+trap cleanup EXIT
+cd /opt/scholarsearch
+export AWS_DEFAULT_REGION='us-west-2'
+export HF_HUB_DISABLE_IMPLICIT_TOKEN=1
+unset AWS_PROFILE AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN HF_TOKEN HUGGING_FACE_HUB_TOKEN || true
+/opt/scholarsearch/venv/bin/python -u -m scholarsearch.embeddings \
+  --root 's3://${bucket}/${prefix}' \
+  --query 'malware detection' --batch-size 4 --device cpu
+WORKER
+chmod 0755 /usr/local/bin/scholarsearch-run
+
+cat > /etc/systemd/system/scholarsearch-embed.service <<'UNIT'
+[Unit]
+Description=Resumable ScholarSearch SPECTER2 embedding worker
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/scholarsearch
+ExecStart=/usr/local/bin/scholarsearch-run
+Restart=no
+TimeoutStopSec=60
+[Install]
+WantedBy=multi-user.target
+UNIT
+systemctl daemon-reload
+systemctl enable --now scholarsearch-embed.service
+echo 'ScholarSearch worker launched.'
