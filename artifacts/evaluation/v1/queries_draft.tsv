@@ -1,0 +1,101 @@
+ls scholarsearch/query_id	query	intent	reviewed
+q001	graph neural networks for malware detection	technical_concept	
+q002	Android malware detection using machine learning	technical_concept	
+q003	ransomware behavioral detection techniques	technical_concept	
+q004	static analysis of malicious executable files	technical_concept	
+q005	dynamic malware analysis using sandbox traces	technical_concept	
+q006	malware classification from API call sequences	technical_concept	
+q007	network traffic based malware detection	technical_concept	
+q008	malware detection with deep neural networks	technical_concept	
+q009	malware family classification and attribution	technical_concept	
+q010	zero day malware detection and generalization	technical_concept	
+q011	explainable malware detection models	technical_concept	
+q012	adversarial evasion of machine learning malware detectors	technical_concept	
+q013	malware detection using control flow graphs	technical_concept	
+q014	malware binary visualization as images	technical_concept	
+q015	representation learning for malware classification	technical_concept	
+q016	sequence modeling of malicious system calls	technical_concept	
+q017	IoT malware detection on embedded devices	technical_concept	
+q018	Windows portable executable malware features	technical_concept	
+q019	malware detection with transformer architectures	technical_concept	
+q020	unsupervised malware clustering methods	technical_concept	
+q021	behavioral analysis of malicious processes	technical_concept	
+q022	malware detection using opcode sequences	technical_concept	
+q023	feature selection for malware classifiers	technical_concept	
+q024	malware detection under concept drift	technical_concept	
+q025	federated learning for privacy preserving malware detection	technical_concept	
+q026	convolutional neural networks for malware binary images	specific_method	
+q027	random forest classifiers for malware detection	specific_method	
+q028	gradient boosted decision trees for malware classification	specific_method	
+q029	long short term memory networks for malware sequences	specific_method	
+q030	bidirectional recurrent networks for malware analysis	specific_method	
+q031	attention mechanisms for API trace classification	specific_method	
+q032	graph convolutional networks for malware call graphs	specific_method	
+q033	graph attention networks for malicious software classification	specific_method	
+q034	contrastive learning for malware embeddings	specific_method	
+q035	autoencoder anomaly detection for malware samples	specific_method	
+q036	self supervised pretraining for malware classification	specific_method	
+q037	few shot malware family identification	specific_method	
+q038	transfer learning for malware detection across datasets	specific_method	
+q039	n gram byte features for malware detection	specific_method	
+q040	byte level embeddings for executable classification	specific_method	
+q041	opcode frequency features for malicious binaries	specific_method	
+q042	dynamic taint analysis in malware detection	specific_method	
+q043	sandbox execution trace classification with neural networks	specific_method	
+q044	ensemble learning for ransomware identification	specific_method	
+q045	multi modal fusion of static and dynamic malware features	specific_method	
+q046	static versus dynamic analysis for malware classification	comparison	
+q047	traditional machine learning versus deep learning for malware detection	comparison	
+q048	graph based versus sequence based malware representations	comparison	
+q049	supervised malware family classification versus unsupervised clustering	comparison	
+q050	signature based versus behavior based malware detection	comparison	
+q051	API call sequences versus control flow graphs for malware classification	comparison	
+q052	CNN versus transformer approaches for malware detection	comparison	
+q053	feature engineering versus learned embeddings in malware classification	comparison	
+q054	cloud based versus on device malware detection tradeoffs	comparison	
+q055	black box versus interpretable malware classifiers	comparison	
+q056	binary image representations versus byte sequence features	comparison	
+q057	malware detection accuracy versus inference latency	comparison	
+q058	centralized versus federated learning for malware detection	comparison	
+q059	anomaly detection versus multiclass malware family classification	comparison	
+q060	robustness of static and dynamic malware detectors to obfuscation	comparison	
+q061	survey of graph learning for malware detection	survey_exploratory	
+q062	survey of Android malware analysis methods	survey_exploratory	
+q063	review of ransomware detection using machine learning	survey_exploratory	
+q064	systematic review of adversarial malware attacks	survey_exploratory	
+q065	survey of malware detection with deep learning	survey_exploratory	
+q066	overview of explainable artificial intelligence for malware detection	survey_exploratory	
+q067	zero day malware detection methods and limitations	survey_exploratory	
+q068	review of binary code analysis for malicious software	survey_exploratory	
+q069	literature survey of malware dataset limitations	survey_exploratory	
+q070	overview of dynamic analysis sandboxes for malware research	survey_exploratory	
+q071	survey of malware evasion and obfuscation defenses	survey_exploratory	
+q072	research trends in transformer based malware classification	survey_exploratory	
+q073	survey of network based malware traffic classification	survey_exploratory	
+q074	review of privacy preserving collaborative malware detection	survey_exploratory	
+q075	survey of malware family attribution methods	survey_exploratory	
+q076	public datasets for Android malware classification	dataset_benchmark	
+q077	malware detection benchmark datasets with family labels	dataset_benchmark	
+q078	ransomware behavior datasets for machine learning	dataset_benchmark	
+q079	malicious executable datasets with API call traces	dataset_benchmark	
+q080	malware classifier evaluation under temporal distribution shift	dataset_benchmark	
+q081	evaluation metrics for imbalanced malware datasets	dataset_benchmark	
+q082	datasets for graph based malware detection	dataset_benchmark	
+q083	reproducible experimental protocols for malware detection	dataset_benchmark	
+q084	benchmarks for zero day malware generalization	dataset_benchmark	
+q085	datasets with packed and obfuscated malware binaries	dataset_benchmark	
+q086	evaluation studies comparing malware feature extraction methods	dataset_benchmark	
+q087	malware datasets with timestamped samples	dataset_benchmark	
+q088	datasets for malicious network flow classification	dataset_benchmark	
+q089	benchmarking adversarial robustness of malware detectors	dataset_benchmark	
+q090	malware detector false positive rate evaluation	dataset_benchmark	
+q091	malware detection without known signatures	ambiguous_challenging	
+q092	classify suspicious files when labels are scarce	ambiguous_challenging	
+q093	identify emerging malware variants from behavior	ambiguous_challenging	
+q094	find malware hidden by code obfuscation	ambiguous_challenging	
+q095	malware detection using network traffic without host telemetry	ambiguous_challenging	
+q096	explain why a binary was flagged as malicious	ambiguous_challenging	
+q097	resource efficient detection of malicious Android applications	ambiguous_challenging	
+q098	track evolving malware families across years	ambiguous_challenging	
+q099	malware detection from short system call sequences	ambiguous_challenging	
+q100	reducing false positive alerts in malware classification	ambiguous_challenging	

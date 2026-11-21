@@ -1,10 +1,13 @@
 import json
 import tempfile
 import unittest
+import sys
+import types
+from unittest.mock import patch
 from pathlib import Path
 from types import SimpleNamespace
 from scholarsearch.evaluation_v1 import (
-    freeze_queries, openalex_id, parse_run, score_runs, read_qrels,
+    freeze_queries, openalex_id, parse_run, score_runs, read_qrels, snapshot_from_papers,
     main, read_jsonl, load_json, read_tsv, write_tsv, write_json, write_jsonl,
     sha256_file, annotate_pool, judgments,
 )
@@ -32,6 +35,39 @@ class EvaluationV1Tests(unittest.TestCase):
               '--queries',str(output/'queries.jsonl'),
               '--runs',str(output/'runs/bm25_toy.trec'),str(output/'runs/dense_toy.trec'),
               '--qrels',str(output/'qrels.tsv'),'--k','3','--out',str(output/'real_score_path_test.json')])
+
+    def test_snapshot_preserves_papers_with_missing_titles(self):
+        papers = [
+            {'id': 'W1', 'title': 'Graph malware detection'},
+            {'id': 'W2', 'title': None},
+            {'id': 'W3', 'title': '  '},
+        ]
+        fake_embeddings = types.ModuleType('scholarsearch.embeddings')
+        fake_embeddings.source_digest = lambda items: 'frozen-digest'
+        fake_index = types.ModuleType('scholarsearch.index')
+        fake_index.curated_uri = lambda root, query: root + '/' + query
+        with patch.dict(sys.modules, {'scholarsearch.embeddings': fake_embeddings,
+                                      'scholarsearch.index': fake_index}):
+            manifest = snapshot_from_papers(papers, root='s3://example', query='malware',
+                                            expected_digest='frozen-digest', expected_count=3)
+        self.assertEqual(manifest['documents'], 3)
+        self.assertEqual(manifest['paper_ids'], ['W1', 'W2', 'W3'])
+        self.assertEqual(manifest['source_digest'], 'frozen-digest')
+        self.assertEqual(manifest['data_quality']['missing_title_count'], 2)
+        self.assertEqual(manifest['data_quality']['missing_title_sample_ids'], ['W2', 'W3'])
+        self.assertIn('graph', [x['term'] for x in manifest['top_title_terms']])
+
+    def test_snapshot_still_rejects_wrong_digest(self):
+        fake_embeddings = types.ModuleType('scholarsearch.embeddings')
+        fake_embeddings.source_digest = lambda items: 'actual-digest'
+        fake_index = types.ModuleType('scholarsearch.index')
+        fake_index.curated_uri = lambda root, query: root + '/' + query
+        with patch.dict(sys.modules, {'scholarsearch.embeddings': fake_embeddings,
+                                      'scholarsearch.index': fake_index}):
+            with self.assertRaisesRegex(ValueError, 'digest mismatch'):
+                snapshot_from_papers([{'id': 'W1', 'title': None}],
+                                     root='s3://example', query='malware',
+                                     expected_digest='wrong-digest', expected_count=1)
 
     def test_queries_require_explicit_review(self):
         rows = [{'query_id':'q001','query':'valid query for research','reviewed':'no'},

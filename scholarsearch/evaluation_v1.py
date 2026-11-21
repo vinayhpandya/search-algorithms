@@ -86,8 +86,10 @@ def snapshot_from_papers(papers, *, root, query, expected_digest=EXPECTED_DIGEST
         raise ValueError(f'Expected {expected_count} papers, got {len(ids)}')
     if expected_digest and digest != expected_digest:
         raise ValueError(f'Corpus digest mismatch: expected {expected_digest}, got {digest}')
-    if any(not str(p.get('title') or '').strip() for p in papers):
-        raise ValueError('Corpus has missing titles')
+    # Missing titles are a data-quality issue, not a corpus-identity failure.
+    # Keep every paper in the frozen snapshot and report the issue explicitly.
+    missing_title_ids = [pid for pid, paper in zip(ids, papers)
+                         if not str(paper.get('title') or '').strip()]
     term_counter = Counter()
     stop = {'the','and','for','with','from','using','based','via','of','on','to','in','a','an',
             'by','approach','study','new','towards','method','methods','analysis','research'}
@@ -102,6 +104,11 @@ def snapshot_from_papers(papers, *, root, query, expected_digest=EXPECTED_DIGEST
         'id_namespace': 'OpenAlex W-id',
         'paper_ids_sha256': hashlib.sha256(('\n'.join(ids)+'\n').encode()).hexdigest(),
         'paper_ids': ids,
+        'data_quality': {
+            'missing_title_count': len(missing_title_ids),
+            'missing_title_sample_ids': missing_title_ids[:20],
+            'title_coverage_fraction': (len(ids) - len(missing_title_ids)) / len(ids) if ids else 0.0,
+        },
         'top_title_terms': [{'term': t, 'papers': n} for t, n in term_counter.most_common(80)],
         'evaluation_status': 'unjudged',
     }
@@ -119,6 +126,11 @@ def snapshot(args):
         raise ValueError(f'{out} already exists. No overwrite without --force')
     write_json(out, manifest)
     print(f"Verified {manifest['documents']} papers digest={manifest['source_digest']} -> {out}")
+    quality = manifest['data_quality']
+    print(f"Missing titles: {quality['missing_title_count']} / {manifest['documents']} "
+          f"(coverage={quality['title_coverage_fraction']:.2%})")
+    if quality['missing_title_sample_ids']:
+        print('Sample paper IDs with missing titles:', ', '.join(quality['missing_title_sample_ids']))
     print('Top title terms:', ', '.join(x['term'] for x in manifest['top_title_terms'][:12]))
 
 
