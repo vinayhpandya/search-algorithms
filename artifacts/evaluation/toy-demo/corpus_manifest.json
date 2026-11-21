@@ -1,0 +1,13 @@
+{
+  "documents": 6,
+  "paper_ids": [
+    "W1",
+    "W2",
+    "W3",
+    "W4",
+    "W5",
+    "W6"
+  ],
+  "schema": "scholarsearch.corpus.v1",
+  "source_digest": "TOY_NOT_REAL"
+}

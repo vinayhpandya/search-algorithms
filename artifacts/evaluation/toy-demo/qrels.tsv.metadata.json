@@ -1,0 +1,6 @@
+{
+  "corpus_digest": "TOY_NOT_REAL",
+  "qrels_sha256": "36189df6c4f11c0d67eea840caba1c45a44ccb75051f2a5956208b522ffc2043",
+  "query_sha256": "bfc7753a9f52746b795e9fc688a870c110c4926e204642d27c23ff45028d266c",
+  "toy_only": true
+}

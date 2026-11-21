@@ -1,0 +1,45 @@
+{
+  "TOY_DATA_DO_NOT_PRESENT_AS_REAL": true,
+  "metrics": {
+    "bm25_toy": {
+      "missing": [],
+      "mrr_at_k": 1.0,
+      "ndcg_at_k": 0.833991,
+      "per_query": [
+        {
+          "mrr_at_k": 1.0,
+          "ndcg_at_k": 0.8339912323981488,
+          "query_id": "q001"
+        },
+        {
+          "mrr_at_k": 1.0,
+          "ndcg_at_k": 0.8339912323981488,
+          "query_id": "q004"
+        }
+      ],
+      "queries_covered": 2,
+      "queries_requested": 2,
+      "status": "COMPLETE_POOLED_JUDGMENTS"
+    },
+    "dense_toy": {
+      "missing": [],
+      "mrr_at_k": 1.0,
+      "ndcg_at_k": 1.0,
+      "per_query": [
+        {
+          "mrr_at_k": 1.0,
+          "ndcg_at_k": 1.0,
+          "query_id": "q001"
+        },
+        {
+          "mrr_at_k": 1.0,
+          "ndcg_at_k": 1.0,
+          "query_id": "q004"
+        }
+      ],
+      "queries_covered": 2,
+      "queries_requested": 2,
+      "status": "COMPLETE_POOLED_JUDGMENTS"
+    }
+  }
+}

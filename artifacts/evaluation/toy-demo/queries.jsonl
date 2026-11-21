@@ -1,0 +1,4 @@
+{"intent": "toy", "query_id": "q001", "split": "test", "text": "Toy research intent number 1"}
+{"intent": "toy", "query_id": "q002", "split": "dev", "text": "Toy research intent number 2"}
+{"intent": "toy", "query_id": "q003", "split": "dev", "text": "Toy research intent number 3"}
+{"intent": "toy", "query_id": "q004", "split": "test", "text": "Toy research intent number 4"}
