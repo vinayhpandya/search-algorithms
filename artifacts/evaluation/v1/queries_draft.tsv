@@ -1,4 +1,4 @@
-ls scholarsearch/query_id	query	intent	reviewed
+query_id	query	intent	reviewed
 q001	graph neural networks for malware detection	technical_concept	
 q002	Android malware detection using machine learning	technical_concept	
 q003	ransomware behavioral detection techniques	technical_concept	
