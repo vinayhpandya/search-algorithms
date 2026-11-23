@@ -1,0 +1,100 @@
+#!/bin/bash
+set -Eeuo pipefail
+exec > >(tee -a /var/log/scholarsearch-bootstrap.log) 2>&1
+
+# Watchdog first: terminate (instance_initiated_shutdown_behavior) after max runtime
+# even if package installation or the experiment hangs.
+cat > /etc/systemd/system/scholarsearch-deadline.service <<'UNIT'
+[Unit]
+Description=Stop ScholarSearch experiment worker after maximum runtime
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/shutdown -h now
+UNIT
+cat > /etc/systemd/system/scholarsearch-deadline.timer <<'UNIT'
+[Unit]
+Description=Max runtime watchdog for ScholarSearch experiment worker
+[Timer]
+OnBootSec=${runtime_hours}h
+AccuracySec=1min
+Unit=scholarsearch-deadline.service
+[Install]
+WantedBy=timers.target
+UNIT
+systemctl daemon-reload
+systemctl enable --now scholarsearch-deadline.timer
+
+# Everything after this point runs inside the job script, so ANY failure
+# (including package installation) still uploads the log and shuts down.
+cat > /usr/local/bin/scholarsearch-experiment <<'WORKER'
+#!/bin/bash
+set -Eeuo pipefail
+LOG=/var/log/scholarsearch-experiment.log
+exec > >(tee -a "$LOG") 2>&1
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+cleanup() {
+  status=$?
+  trap - EXIT
+  echo "Experiment worker exiting with status $status"
+  cat /var/log/scholarsearch-bootstrap.log >> "$LOG" 2>/dev/null || true
+  aws s3 cp "$LOG" "s3://${bucket}/${prefix}/worker-logs/experiment-${config_name}-$STAMP-exit$status.log" || true
+  /usr/sbin/shutdown -h now || true   # terminates the instance
+  exit "$status"
+}
+trap cleanup EXIT
+
+export AWS_DEFAULT_REGION='${region}'
+unset AWS_PROFILE AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN || true
+
+dnf install -y python3.11 python3.11-pip tar gzip
+command -v aws >/dev/null 2>&1 || dnf install -y awscli
+install -d -m 0755 /opt/scholarsearch
+cd /opt/scholarsearch
+for attempt in 1 2 3 4 5 6; do
+  aws s3 cp 's3://${bucket}/${source_key}' source.tar.gz && break
+  if [[ "$attempt" == 6 ]]; then echo 'Could not fetch source archive' >&2; exit 1; fi
+  sleep 15
+done
+tar -xzf source.tar.gz
+python3.11 -m venv venv
+venv/bin/python -m pip install --quiet --upgrade pip
+# Only what the ANN/retrieval/report stages import. No PyTorch needed for this job.
+venv/bin/python -m pip install --quiet \
+  'numpy>=1.26,<3' 'faiss-cpu>=1.8' 'polars>=1.0,<3' 'boto3>=1.35' 'python-dotenv>=1.0'
+venv/bin/python -c 'import faiss, numpy, polars; print("Experiment dependencies ready")'
+%{ if install_ml ~}
+# Rerankers: CPU-only PyTorch (avoids multi-GB CUDA wheels), cross-encoder, ColBERT via fastembed.
+venv/bin/python -m pip install --quiet --index-url https://download.pytorch.org/whl/cpu 'torch>=2.4'
+venv/bin/python -m pip install --quiet 'sentence-transformers>=3.0' 'fastembed>=0.5'
+venv/bin/python -c 'import torch, sentence_transformers, fastembed; print("Reranker dependencies ready", torch.__version__)'
+%{ endif ~}
+%{ if key_parameter != "" ~}
+# Judge API key: read from SSM into this process's environment only. Never written to disk or logged.
+OPENAI_API_KEY="$(aws ssm get-parameter --name '${key_parameter}' --with-decryption --query Parameter.Value --output text)"
+export OPENAI_API_KEY
+echo "Judge API key loaded from SSM parameter ${key_parameter}"
+%{ endif ~}
+
+echo "Running config ${config_uri}"
+venv/bin/python -u -m scholarsearch.run_experiments --config '${config_uri}'
+WORKER
+chmod 0755 /usr/local/bin/scholarsearch-experiment
+
+cat > /etc/systemd/system/scholarsearch-experiment.service <<'UNIT'
+[Unit]
+Description=ScholarSearch experiment runner (terminates the instance when done)
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt
+ExecStart=/usr/local/bin/scholarsearch-experiment
+Restart=no
+TimeoutStopSec=60
+[Install]
+WantedBy=multi-user.target
+UNIT
+systemctl daemon-reload
+systemctl enable --now scholarsearch-experiment.service
+echo 'ScholarSearch experiment worker launched.'

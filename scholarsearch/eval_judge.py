@@ -149,9 +149,10 @@ def dcg(labels: list[int]) -> float:
     return sum((2 ** label - 1) / math.log2(rank + 1) for rank, label in enumerate(labels, 1))
 
 
-def evaluate(data: dict, labels: dict[tuple[str, str], dict], *, query_limit: int | None = None) -> dict:
+def evaluate(data: dict, labels: dict[tuple[str, str], dict], *, query_limit: int | None = None,
+             methods: tuple[str, ...] | list[str] | None = None) -> dict:
     rows = data['results'] if query_limit is None else data['results'][:query_limit]
-    methods = ('bm25', 'dense', 'hybrid')
+    methods = tuple(methods or ('bm25', 'dense', 'hybrid'))
     scores = defaultdict(list)
     missing = []
     for row in rows:
@@ -179,7 +180,7 @@ def evaluate(data: dict, labels: dict[tuple[str, str], dict], *, query_limit: in
                for method, values in scores.items()}
     # The runner records only post-embedding retrieval latency; it excludes
     # S3 loading and index construction, and hybrid includes both retrievals.
-    latency_keys = {'bm25': 'bm25', 'dense': 'dense', 'hybrid': 'hybrid_total'}
+    latency_keys = {m: ('hybrid_total' if m == 'hybrid' else m) for m in methods}
     for method, key in latency_keys.items():
         times = sorted(float(row.get('latency_ms', {}).get(key, 0)) for row in rows)
         if any(key not in row.get('latency_ms', {}) for row in rows):

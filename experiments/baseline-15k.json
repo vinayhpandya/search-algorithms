@@ -1,0 +1,36 @@
+{
+  "name": "baseline-15k",
+  "description": "Reproduce the 15K BM25 / dense / hybrid results and run the ANN benchmark through the runner. Inputs are uploaded to S3 by scripts/package_source.sh.",
+  "root": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b",
+  "query": "malware detection",
+  "out_root": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b/runs",
+  "ann": {
+    "enabled": true,
+    "queries": 200,
+    "nlist": 128,
+    "nprobes": [
+      1,
+      4,
+      8,
+      16
+    ],
+    "ef_search": [
+      16,
+      64,
+      128
+    ],
+    "pq_m": 64,
+    "repeats": 3
+  },
+  "retrieval": {
+    "enabled": true,
+    "queries": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b/inputs/evaluation/v1/queries_draft.tsv",
+    "query_vectors": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b/inputs/evaluation/v1/query_vectors.jsonl",
+    "k": 10,
+    "candidate_k": 50
+  },
+  "report": {
+    "enabled": true,
+    "labels": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b/inputs/evaluation/v1/llm_judgments.jsonl"
+  }
+}

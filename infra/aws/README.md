@@ -87,3 +87,30 @@ Be certain you are in `ephemeral`, not `persistent`. Persistent state is separat
 - OpenSearch IVF training via the Train Model API and index mapping with a trained model (version-specific). The benchmark's IVF is Faiss IVF-Flat.
 - No GPU or Spark resources are created by this Terraform module.
 - If later adding GCP/Azure, define separate providers/states; this module is AWS-specific.
+
+## Experiment worker (one run per `terraform apply`)
+
+`experiment-worker/` runs `python -m scholarsearch.run_experiments --config <S3 config>` on a
+disposable EC2 instance, writes results to `<experiment prefix>/runs/<run_id>/`, uploads its log
+to `<experiment prefix>/worker-logs/`, and **terminates itself** (watchdog: `max_runtime_hours`).
+
+```bash
+./scripts/package_source.sh                     # code, experiments/*.json, eval inputs -> S3
+cd infra/aws/experiment-worker
+terraform apply -var config_name=baseline-15k   # ANN + BM25/dense/hybrid, no ML deps, no API key
+terraform destroy                               # remove role/security group afterwards
+```
+
+Rerankers and the judge stage (`config_name=rerank-15k`) need two extra variables:
+
+```bash
+# once: store the judge key as an encrypted SSM parameter (never in Terraform, git or S3)
+aws ssm put-parameter --name /scholarsearch/openai-api-key --type SecureString --value "$OPENAI_API_KEY"
+
+terraform apply -var config_name=rerank-15k -var install_ml=true \
+  -var openai_key_parameter=/scholarsearch/openai-api-key
+```
+
+The worker role can read only that one parameter. The judge stage judges only pairs that have no
+label yet, appends them to the S3 labels file, and records spend in `judge_spend.json`; it stops
+before the cumulative `judge.max_usd` cap in the config would be exceeded.

@@ -1,0 +1,48 @@
+{
+  "name": "rerank-15k",
+  "description": "15K: exact vs HNSW dense, hybrid, and cross-encoder / ColBERT reranking of hybrid's top 100. New pairs judged with the same gpt-4o-mini rubric, cumulative cap $25.",
+  "root": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b",
+  "query": "malware detection",
+  "out_root": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b/runs",
+  "ann": {
+    "enabled": false
+  },
+  "retrieval": {
+    "enabled": true,
+    "queries": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b/inputs/evaluation/v1/queries_draft.tsv",
+    "query_vectors": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b/inputs/evaluation/v1/query_vectors.jsonl",
+    "k": 10,
+    "candidate_k": 50,
+    "pool": 100,
+    "methods": [
+      "bm25",
+      "dense",
+      "dense_hnsw",
+      "hybrid",
+      "hybrid_hnsw",
+      "hybrid+cross_encoder",
+      "hybrid+colbert"
+    ],
+    "hnsw": {
+      "M": 16,
+      "ef_construction": 200,
+      "ef_search": 64
+    },
+    "models": {
+      "cross_encoder": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "colbert": "colbert-ir/colbertv2.0"
+    }
+  },
+  "judge": {
+    "enabled": true,
+    "model": "gpt-4o-mini",
+    "max_usd": 25,
+    "price_per_million_input": 0.15,
+    "price_per_million_output": 0.60,
+    "estimated_usd_per_pair": 0.0005
+  },
+  "report": {
+    "enabled": true,
+    "labels": "s3://scholarsearch-1a1f8b35f8/scholarsearch/experiments/experiment-b/inputs/evaluation/v1/llm_judgments.jsonl"
+  }
+}
